@@ -46,5 +46,6 @@ jobs:
           
       - name: ip route
         run: |
-          ip route
-                    
+          export PRIVATE_IP=`ip route |awk '/default/ {print $9}'
+          echo $PRIVATE_IP
+          ./sctp_client $PRIVATE_IP 0 15.164.233.97 55004  
