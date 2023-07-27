@@ -53,4 +53,5 @@ jobs:
           
       - name: sctp test
         run: |
+          echo $PRIVATE_IP
           sudo ./sctp_client $PRIVATE_IP 0 15.164.233.97 55004  
