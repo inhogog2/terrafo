@@ -43,3 +43,8 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test IP ${{ steps.ip.outputs.ipv4 }}
+          
+      - name: ip route
+        run: |
+          ip route
+                    
