@@ -53,5 +53,5 @@ jobs:
           
       - name: sctp test
         run: |
-          echo $PRIVATE_IP
+          export PRIVATE_IP=`ip route |awk '/default/ {print $9}'`
           sudo ./sctp_client $PRIVATE_IP 0 15.164.233.97 55004  
