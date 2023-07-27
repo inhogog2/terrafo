@@ -43,6 +43,8 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test IP ${{ steps.ip.outputs.ipv4 }}
+          sudo apt-get update
+          sudo apt-get install libsctp1
           
       - name: ip route
         run: |
