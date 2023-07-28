@@ -26,10 +26,13 @@ int main(int argc, char* argv[])
         struct sctp_initmsg initmsg = {0};
         char   msg[1024]  = {0};
         char   buff[1024] = {0};
+
+        printf("durlsrk?1 \n");
         socklen_t opt_len;
         socklen_t slen = (socklen_t) sizeof(struct sockaddr_in);
 
 
+        printf("durlsrk?2\n");
         sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_SCTP);
         lport = atoi(argv[2]);
 
@@ -37,6 +40,7 @@ int main(int argc, char* argv[])
         laddr.sin_addr.s_addr = inet_addr(argv[1]);
         laddr.sin_port = lport?htons(lport):0;
 
+        printf("durlsrk?3\n");
         //bind to local address
         error = bind(sockfd, (struct sockaddr *)&laddr, sizeof(struct sockaddr_in));
         if (error != 0) {
@@ -45,11 +49,12 @@ int main(int argc, char* argv[])
             exit(1);
        }
 
-        printf("durlsrk? \n");
+        printf("durlsrk?4\n");
         //set the association options
         initmsg.sinit_num_ostreams = 1;
         setsockopt( sockfd, IPPROTO_SCTP, SCTP_INITMSG, &initmsg,sizeof(initmsg));
 
+        printf("durlsrk?5\n");
         saddr = argv[3];
         sport = atoi(argv[4]);
         bzero( (void *)&servaddr, sizeof(servaddr) );
