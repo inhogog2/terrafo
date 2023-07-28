@@ -43,8 +43,17 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test IP ${{ steps.ip.outputs.ipv4 }}
+          sudo apt-get update
+          sudo apt-get install libsctp1
           
       - name: ip route
         run: |
-          ip route
-                    
+          export PRIVATE_IP=`ip route |awk '/default/ {print $9}'`
+          echo $PRIVATE_IP
+          
+      - name: sctp test
+        run: |
+          export PRIVATE_IP=`ip route |awk '/default/ {print $9}'`
+          echo $PRIVATE_IP
+          sleep 100
+          sudo ./sctp_client $PRIVATE_IP 0 15.152.36.101 55004  
