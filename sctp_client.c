@@ -64,11 +64,27 @@ int main(int argc, char* argv[])
 
 
         printf("try conntect!! \n");
-	connect( sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+        connect( sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
         printf("conntected \n");
-        //opt_len = (socklen_t) sizeof(struct sctp_status);
-        //getsockopt(sockfd, IPPROTO_SCTP, SCTP_STATUS, &status, &opt_len);
+        opt_len = (socklen_t) sizeof(struct sctp_status);
+        getsockopt(sockfd, IPPROTO_SCTP, SCTP_STATUS, &status, &opt_len);
         printf("get socket\n");
+        while(1)
+        {
+                strncpy (msg, "hello", strlen("hello"));
+                printf("Sending msg to server: %s", msg);
+                sctp_sendmsg(sockfd, (const void *)msg, strlen(msg), NULL, 0,htonl(PPID), 0, 0 , 0, 0);
+
+                in = sctp_recvmsg(sockfd, (void*)buff, RECVBUFSIZE, 
+                                  (struct sockaddr *)&servaddr, 
+                                  &slen, &sndrcvinfo, &flags);
+                if (in > 0 && in < RECVBUFSIZE - 1)
+                {
+                        buff[in] = 0;
+                        printf("%s",buff);
+                        break;
+                }
+        } 
 
         close(sockfd);
         return 0;
