@@ -45,6 +45,7 @@ int main(int argc, char* argv[])
             exit(1);
        }
 
+        printf("durlsrk? \n");
         //set the association options
         initmsg.sinit_num_ostreams = 1;
         setsockopt( sockfd, IPPROTO_SCTP, SCTP_INITMSG, &initmsg,sizeof(initmsg));
