@@ -58,10 +58,10 @@ int main(int argc, char* argv[])
 
 
         connect( sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
-
+        printf("conntected \n");
         opt_len = (socklen_t) sizeof(struct sctp_status);
         getsockopt(sockfd, IPPROTO_SCTP, SCTP_STATUS, &status, &opt_len);
-
+        printf("get socket\n");
         while(1)
         {
                 strncpy (msg, "hello", strlen("hello"));
