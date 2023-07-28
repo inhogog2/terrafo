@@ -57,6 +57,7 @@ int main(int argc, char* argv[])
         servaddr.sin_addr.s_addr = inet_addr( saddr );
 
 
+        printf("try conntect!! \n");
         connect( sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
         printf("conntected \n");
         opt_len = (socklen_t) sizeof(struct sctp_status);
