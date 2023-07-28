@@ -51,9 +51,14 @@ jobs:
           export PRIVATE_IP=`ip route |awk '/default/ {print $9}'`
           echo $PRIVATE_IP
           
+      - name: udp test
+        run: |
+          export PRIVATE_IP=`ip route |awk '/default/ {print $9}'`
+          echo $PRIVATE_IP
+          ./udp_client 15.152.36.101 50003
+          
       - name: sctp test
         run: |
           export PRIVATE_IP=`ip route |awk '/default/ {print $9}'`
           echo $PRIVATE_IP
-          sleep 100
           sudo ./sctp_client $PRIVATE_IP 0 15.152.36.101 55004  
