@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
 
         printf("try conntect!! \n");
-	//connect( sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+	connect( sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
         printf("conntected \n");
         //opt_len = (socklen_t) sizeof(struct sctp_status);
         //getsockopt(sockfd, IPPROTO_SCTP, SCTP_STATUS, &status, &opt_len);
