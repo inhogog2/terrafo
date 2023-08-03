@@ -36,10 +36,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
+      - name: Set Host IP
+        id: loxilb-public-ip
+        run: echo "LOXILB_PUBLIC=13.208.212.175" >> $GITHUB_OUTPUT
+        
       - name: SSH Commands
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: "13.208.212.175"
+          host: ${{ steps.loxilb-public-ip.outputs.LOXILB_PUBLIC }}
           username: "ubuntu"
           key: ${{ secrets.AWS_SSH_KEY }}
           port: 22
