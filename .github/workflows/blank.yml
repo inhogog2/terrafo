@@ -38,13 +38,15 @@ jobs:
 
       - name: Set Host IP
         id: loxilb-public-ip
-        run: echo "LOXILB_PUBLIC=13.208.212.175" >> $GITHUB_OUTPUT
+        run: |
+          echo "LOXILB_PUBLIC=13.208.212.175" >> $GITHUB_OUTPUT
+          echo "LOXILB_USER=ubuntu" >> $GITHUB_OUTPUT
         
       - name: SSH Commands
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ steps.loxilb-public-ip.outputs.LOXILB_PUBLIC }}
-          username: "ubuntu"
+          username: ${{ steps.loxilb-public-ip.outputs.LOXILB_USER }}
           key: ${{ secrets.AWS_SSH_KEY }}
           port: 22
           script_stop: true
