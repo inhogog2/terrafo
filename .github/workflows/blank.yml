@@ -25,39 +25,24 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-
       - name: Get Github Actions IP
         id: ip
         uses: haythem/public-ip@v1.2
-        
-      - name: Run a multi-line script2
-        run: |
-          echo Add other actions to build,
-          echo test IP ${{ steps.ip.outputs.ipv4 }}
-          sudo apt-get update
-          sudo apt-get install libsctp1 libsctp-dev -y
-          
-      - name: ip route
-        run: |
-          export PRIVATE_IP=`ip route |awk '/default/ {print $9}'`
-          echo $PRIVATE_IP
 
-      - name: sctp build
-        run: |
-          gcc sctp_client.c -lsctp -o temp -Wall
-          ls 
-          
-      - name: sctp test
-        run: |
-          export PRIVATE_IP=`ip route |awk '/default/ {print $9}'`
-          echo $PRIVATE_IP
-          sudo ./temp $PRIVATE_IP 0 15.152.36.101 55004  
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: SSH Commands
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: "13.208.212.175"
+          username: "ubuntu"
+          key: ${{ secrets.AWS_SSH_KEY }}
+          port: 22
+          script_stop: true
+          script: |
+            uname -a
