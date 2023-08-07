@@ -59,3 +59,8 @@ jobs:
             sudo docker run -u root --cap-add SYS_ADMIN --net host  --restart unless-stopped --privileged -dit -v /dev/log:/dev/log --name loxilb ghcr.io/loxilb-io/loxilb:latest
             sleep 10
             sudo docker exec loxilb /root/loxilb-io/loxilb/loxilb -v
+        
+      - name : delete testbed
+        if: ${{ always() }}
+        run: |
+          echo "It will show anytime"
