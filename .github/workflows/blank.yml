@@ -34,32 +34,48 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
+          aws-region: ap-northeast-3
 
-      - name: Set Host IP
-        id: loxilb-public-ip
-        run: |
-          echo "LOXILB_PUBLIC=13.208.244.97" >> $GITHUB_OUTPUT
-          echo "LOXILB_USER=ubuntu" >> $GITHUB_OUTPUT
-        
-      - name: SSH Commands
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ steps.loxilb-public-ip.outputs.LOXILB_PUBLIC }}
-          username: ${{ steps.loxilb-public-ip.outputs.LOXILB_USER }}
-          key: ${{ secrets.AWS_SSH_KEY }}
-          port: 22
-          script_stop: true
-          script: |
-            uname -a
-            sudo docker exec loxilb /root/loxilb-io/loxilb/loxilb -v
+    - name: Get envs
+      run: |
+        echo "LOXILB_PUBLIC_IP=$(terraform output -raw loxilb_public_ip)" >> $GITHUB_ENV
+        echo "LOXILB_PRIVATE_IP=$(terraform output -raw loxilb_private_ip)" >> $GITHUB_ENV
+        echo "HOST_PUBLIC_IP=$(terraform output -raw host_public_ip)" >> $GITHUB_ENV
+        echo "HOST_PRIVATE_IP=$(terraform output -raw host_private_ip)" >> $GITHUB_ENV
+        echo "LOXILB_USER=ubuntu" >> $GITHUB_ENV
+        echo "HOST_USER=ubuntu" >> $GITHUB_ENV
+
+    - name: Loxilb update
+      uses: appleboy/ssh-action@v0.1.6
+      with:          
+        host: ${{ env.LOXILB_PUBLIC_IP }}
+        username: ${{ env.LOXILB_USER }}
+        key: ${{ secrets.AWS_SSH_KEY }}
+        port: 22
+        script_stop: true
+        script: |
             sudo docker image pull ghcr.io/loxilb-io/loxilb:latest
             sudo docker stop loxilb
             sudo docker rm loxilb
             sudo docker run -u root --cap-add SYS_ADMIN --net host  --restart unless-stopped --privileged -dit -v /dev/log:/dev/log --name loxilb ghcr.io/loxilb-io/loxilb:latest
-            sleep 10
+            sleep 20
             sudo docker exec loxilb /root/loxilb-io/loxilb/loxilb -v
-        
+
+    - name: Host Commands
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ env.HOST_PUBLIC_IP }}
+        username: ${{ env.HOST_USER }}
+        key: ${{ secrets.AWS_SSH_KEY }}
+        port: 22
+        script_stop: true
+        script: |
+          curl http://${{ env.LOXILB_PUBLIC_IP }}:8080
+          sleep 10
+          ./udp_client ${{ env.LOXILB_PUBLIC_IP }} 50003
+          sleep 10
+          ./sctp_client ${{ env.HOST_PRIVATE_IP }} 0 ${{ env.LOXILB_PUBLIC_IP }} 55004
+
       - name : delete testbed
         if: ${{ always() }}
         run: |
